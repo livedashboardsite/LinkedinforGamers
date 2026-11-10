@@ -67,16 +67,23 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="navbar-wrapper">
       <div className="navbar-container">
-        {/* Brand Logo */}
-        <div className="nav-brand" onClick={() => handleNav('plaza')} role="button" tabIndex={0}>
-          <div className="brand-logo-icon">
-            <Shield className="brand-icon-shield" />
-            <Crosshair className="brand-icon-crosshair" />
+        {/* Brand Logo & Live Sandbox Pill */}
+        <div className="nav-brand-group">
+          <div className="nav-brand" onClick={() => handleNav('plaza')} role="button" tabIndex={0}>
+            <div className="brand-logo-icon">
+              <Shield className="brand-icon-shield" />
+              <Crosshair className="brand-icon-crosshair" />
+            </div>
+            <div className="brand-text">
+              <span className="brand-title">NEXUS<span className="brand-highlight">//</span>NET</span>
+              <span className="brand-subtitle">THE GAMER PASSPORT</span>
+            </div>
           </div>
-          <div className="brand-text">
-            <span className="brand-title">NEXUS<span className="brand-highlight">//</span>NET</span>
-            <span className="brand-subtitle">THE GAMER PASSPORT</span>
-          </div>
+
+          <span className="nav-sandbox-tag" title="Fully interactive product model">
+            <span className="nav-sandbox-ping" />
+            LIVE SANDBOX
+          </span>
         </div>
 
         {/* Global Search / Command Palette Trigger */}
@@ -88,10 +95,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           }}
           title="Open Command Palette (⌘K)"
         >
-          <Search className="search-icon" size={16} />
+          <Search className="search-icon" size={15} />
           <input
             type="text"
-            placeholder="Search players, rosters, studios, UE5 devs... (⌘K)"
+            placeholder="Search players, rosters, scrims... (⌘K)"
             className="nav-search-input"
             readOnly
           />
@@ -105,7 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => handleNav('plaza')}
             onMouseEnter={() => sounds.playHover()}
           >
-            <Gamepad2 size={18} />
+            <Gamepad2 size={16} />
             <span>The Plaza</span>
             {currentTab === 'plaza' && <div className="nav-glow-indicator" />}
           </button>
@@ -115,7 +122,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => handleNav('profile')}
             onMouseEnter={() => sounds.playHover()}
           >
-            <Sparkles size={18} />
+            <Sparkles size={16} />
             <span>Character Sheet</span>
             {currentTab === 'profile' && <div className="nav-glow-indicator" />}
           </button>
@@ -125,7 +132,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => handleNav('jobs')}
             onMouseEnter={() => sounds.playHover()}
           >
-            <Briefcase size={18} />
+            <Briefcase size={16} />
             <span>LFG & Careers</span>
             <span className="nav-badge-pill">14 New</span>
             {currentTab === 'jobs' && <div className="nav-glow-indicator" />}
@@ -136,8 +143,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => handleNav('guilds')}
             onMouseEnter={() => sounds.playHover()}
           >
-            <Users size={18} />
-            <span>Guilds & Orgs</span>
+            <Users size={16} />
+            <span>Guilds</span>
             {currentTab === 'guilds' && <div className="nav-glow-indicator" />}
           </button>
 
@@ -146,7 +153,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => handleNav('scrims')}
             onMouseEnter={() => sounds.playHover()}
           >
-            <Crosshair size={18} />
+            <Crosshair size={16} />
             <span>Scrim Radar</span>
             <span className="nav-ping-dot" />
             {currentTab === 'scrims' && <div className="nav-glow-indicator" />}
@@ -155,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right Tools & User Quick Chip */}
         <div className="nav-actions">
-          {/* AI Scout Button */}
+          {/* AI Scout Button with Glowing Pulse */}
           <button 
             className="nav-ai-scout-btn"
             onClick={() => {
@@ -164,26 +171,26 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
             title="Launch Nexus AI Scout & Co-Pilot"
           >
-            <Bot size={16} className="text-emerald" />
+            <Bot size={15} className="text-emerald" />
             <span className="ai-btn-text">AI Scout</span>
           </button>
 
-          {/* SaaS Overview Switcher */}
+          {/* Switch to SaaS Landing Page */}
           <button 
             className="btn-saas-switch"
             onClick={onNavigateToLanding}
-            title="Return to Public SaaS Landing Page"
+            title="Return to Public SaaS Overview"
           >
-            <span>Overview</span>
+            <span>SaaS Overview</span>
           </button>
 
           {/* Sound FX Toggle */}
           <button 
             className="sound-toggle-btn" 
             onClick={toggleSound}
-            title={soundEnabled ? 'Mute Interface SFX' : 'Enable Cyber SFX'}
+            title={soundEnabled ? 'Mute Interface Audio' : 'Enable Cyber Audio'}
           >
-            {soundEnabled ? <Volume2 size={17} /> : <VolumeX size={17} />}
+            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
           </button>
 
           {/* Theme Toggle (Light / Dark) */}
@@ -193,7 +200,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
             aria-label="Toggle Theme"
           >
-            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>
 
           {/* Notifications Toggle */}
@@ -205,7 +212,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
             title="Scout Notifications"
           >
-            <Bell size={17} />
+            <Bell size={16} />
             {unreadCount > 0 && <span className="notif-count">{unreadCount}</span>}
           </button>
 

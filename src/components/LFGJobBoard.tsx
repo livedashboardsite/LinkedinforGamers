@@ -51,16 +51,15 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
     return true;
   });
 
-
   return (
     <div className="job-board-container">
-      {/* Header Banner */}
+      {/* Sleek Header Banner */}
       <div className="glass-card job-header-banner">
         <div>
           <div className="job-title-row">
             <Briefcase className="job-header-icon" />
             <h1 className="job-page-title">LFG & CAREER MARKETPLACE</h1>
-            <span className="live-scout-badge">SCOUTS ACTIVE NOW</span>
+            <span className="live-scout-badge">SCOUTS ACTIVE</span>
           </div>
           <p className="job-page-subtitle">
             Verified team roster trials, AAA studio contracts, creator sponsorships, and indie dev rev-share bounties.
@@ -88,7 +87,7 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
       <div className="glass-card job-controls-card">
         {/* Search bar */}
         <div className="job-search-input-wrap">
-          <Search size={18} className="search-icon-inside" />
+          <Search size={16} className="search-icon-inside" />
           <input
             type="text"
             placeholder="Search roles: 'Initiator', 'Unreal Engine 5 Netcode', 'Lead Caster', 'Shader'..."
@@ -111,21 +110,21 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
               className={`job-chip ${selectedCategory === 'esports' ? 'active' : ''}`}
               onClick={() => { sounds.playClick(); setSelectedCategory('esports'); }}
             >
-              <Gamepad2 size={13} />
+              <Gamepad2 size={12} />
               <span>Esports & Rosters</span>
             </button>
             <button
               className={`job-chip ${selectedCategory === 'studio' ? 'active' : ''}`}
               onClick={() => { sounds.playClick(); setSelectedCategory('studio'); }}
             >
-              <Code size={13} />
+              <Code size={12} />
               <span>Studio & Dev</span>
             </button>
             <button
               className={`job-chip ${selectedCategory === 'creator' ? 'active' : ''}`}
               onClick={() => { sounds.playClick(); setSelectedCategory('creator'); }}
             >
-              <Users size={13} />
+              <Users size={12} />
               <span>Creator & Coaching</span>
             </button>
           </div>
@@ -147,7 +146,7 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
               className={`job-chip ${selectedRegion === 'saved' ? 'active' : ''}`}
               onClick={() => { sounds.playClick(); setSelectedRegion('saved'); }}
             >
-              <Bookmark size={13} />
+              <Bookmark size={12} />
               <span>Saved Roles</span>
             </button>
           </div>
@@ -193,11 +192,11 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
 
                   <div className="job-sub-specs">
                     <span className="spec-item text-emerald">
-                      <DollarSign size={14} />
+                      <DollarSign size={13} />
                       <strong>{job.salary}</strong>
                     </span>
                     <span className="spec-item">
-                      <MapPin size={14} />
+                      <MapPin size={13} />
                       {job.region}
                     </span>
                     {job.isRemote && (
@@ -223,13 +222,13 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
               {/* Action Buttons Column */}
               <div className="job-actions-col">
                 <div className="job-applicants-note">
-                  <Users size={13} />
+                  <Users size={12} />
                   <span>{job.applicantsCount} Verified Applicants</span>
                 </div>
 
                 {job.applied ? (
                   <button className="btn-applied-status" disabled>
-                    <CheckCircle2 size={16} />
+                    <CheckCircle2 size={15} />
                     <span>Applied with Passport</span>
                   </button>
                 ) : (
@@ -241,7 +240,7 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
                     className="btn-glow-primary job-apply-btn"
                   >
                     <span>Apply with Passport</span>
-                    <ArrowRight size={15} />
+                    <ArrowRight size={14} />
                   </button>
                 )}
 
@@ -255,7 +254,7 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
                     className="btn-ai-pitch-shortcut"
                     title="Generate tailored application pitch using AI"
                   >
-                    <Bot size={14} className="text-emerald" />
+                    <Bot size={13} className="text-emerald" />
                     <span>Draft Pitch with AI</span>
                   </button>
                 )}
@@ -270,7 +269,7 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
                     className={`btn-save-job ${job.saved ? 'saved' : ''}`}
                     title={job.saved ? 'Remove Bookmark' : 'Save Job Opportunity'}
                   >
-                    <Bookmark size={14} fill={job.saved ? 'currentColor' : 'none'} />
+                    <Bookmark size={13} fill={job.saved ? 'currentColor' : 'none'} />
                     <span>{job.saved ? 'Bookmarked' : 'Save'}</span>
                   </button>
                 )}

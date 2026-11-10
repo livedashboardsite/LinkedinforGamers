@@ -10,11 +10,12 @@ import {
   Mouse, 
   Keyboard, 
   Layers,
-  Sparkles,
+  Sparkles, 
   CheckCircle2, 
-  MapPin,
-  Bot,
-  Zap
+  MapPin, 
+  Bot, 
+  Zap,
+  Award
 } from 'lucide-react';
 import type { UserProfile, ClipItem } from '../types';
 import { RadarChart } from './RadarChart';
@@ -57,19 +58,27 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
     return <Layers size={16} />;
   };
 
+  // Calculate dynamic average rating from radar stats
+  const averageRating = Math.round(
+    profile.radarStats.reduce((acc, curr) => acc + curr.value, 0) / profile.radarStats.length
+  );
+
   return (
     <div className="character-sheet-container">
       {/* Hero Banner with Futuristic Cyber Overlay */}
       <div className="profile-banner-container">
         <img src={profile.bannerUrl} alt="Tournament Arena" className="profile-banner-img" />
         <div className="profile-banner-overlay" />
-        <div className="banner-tag-badge">VERIFIED PRO PASSPORT // VCT CIRCUIT</div>
+        <div className="banner-tag-badge">
+          <Award size={13} className="text-lemon" />
+          <span>VERIFIED TOURNAMENT PASSPORT // VCT NA CIRCUIT</span>
+        </div>
       </div>
 
       {/* Main Character Header Card */}
       <div className="glass-card profile-hero-card">
         <div className="hero-card-left">
-          {/* Avatar with Glow and Level Ring */}
+          {/* Avatar with Animated Glow and Level Ring */}
           <div className="avatar-frame-container">
             <div className="avatar-glow-ring" />
             <img src={profile.avatarUrl} alt={profile.gamertag} className="profile-avatar-large" />
@@ -84,21 +93,27 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
             <div className="profile-names-row">
               <h1 className="profile-gamertag">{profile.gamertag}</h1>
               <span title="Verified Tournament Identity" style={{ display: 'inline-flex' }}>
-                <ShieldCheck className="passport-verified-icon" size={26} />
+                <ShieldCheck className="passport-verified-icon" size={24} />
               </span>
               <span className="tier-pill-gold">TIER 1 PRO</span>
+              <span className="ovr-rating-badge">
+                <span className="ovr-val">{averageRating}</span>
+                <span className="ovr-lbl">OVR</span>
+              </span>
             </div>
+
             <div className="profile-real-name-row">
               <span className="real-name">{profile.realName}</span>
               <span className="handle-text">{profile.handle}</span>
               <span className="location-pill">
-                <MapPin size={12} /> {profile.location}
+                <MapPin size={11} /> {profile.location}
               </span>
             </div>
+
             <p className="profile-headline">{profile.title}</p>
             <p className="profile-bio-text">{profile.bio}</p>
 
-            {/* XP Progression Bar */}
+            {/* XP Progression Bar with Shimmer */}
             <div className="xp-bar-container">
               <div className="xp-bar-header">
                 <span className="xp-label">EXPERIENCE RANK PROGRESSION</span>
@@ -143,7 +158,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
                 className="btn-glow-primary hero-btn hero-ai-btn"
                 title="Run AI Scout evaluation on this character sheet"
               >
-                <Bot size={16} className="text-emerald" />
+                <Bot size={15} className="text-emerald" />
                 <span>AI Scout Audit</span>
               </button>
             )}
@@ -155,7 +170,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
               }}
               className="btn-secondary hero-btn"
             >
-              <Edit3 size={16} />
+              <Edit3 size={15} />
               <span>Edit Character Sheet</span>
             </button>
 
@@ -163,8 +178,8 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
               onClick={handleCopyCard}
               className="btn-ghost-secondary hero-btn"
             >
-              {copiedLink ? <CheckCircle2 size={16} className="text-emerald" /> : <Share2 size={16} />}
-              <span>{copiedLink ? 'Passport Copied!' : 'Share Player Card'}</span>
+              {copiedLink ? <CheckCircle2 size={15} className="text-emerald" /> : <Share2 size={15} />}
+              <span>{copiedLink ? 'Link Copied!' : 'Share Player Card'}</span>
             </button>
           </div>
         </div>
@@ -173,11 +188,15 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
       {/* Verified Game Ecosystem Row (Steam, Riot, Faceit, Twitch, GitHub) */}
       <div className="verified-accounts-grid">
         {profile.verifiedAccounts.map((acc, idx) => (
-          <div key={idx} className="glass-card verified-account-card">
+          <div 
+            key={idx} 
+            className="glass-card verified-account-card"
+            style={{ '--account-glow': acc.color } as React.CSSProperties}
+          >
             <div className="acc-header">
               <span className="acc-platform-name">{acc.name}</span>
               <span className="acc-check-badge">
-                <ShieldCheck size={14} /> VERIFIED
+                <ShieldCheck size={12} /> VERIFIED
               </span>
             </div>
             <div className="acc-rank-display" style={{ color: acc.color }}>
@@ -194,7 +213,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
           className={`subnav-btn ${activeTab === 'stats' ? 'active' : ''}`}
           onClick={() => { sounds.playClick(); setActiveTab('stats'); }}
         >
-          <Sparkles size={16} />
+          <Sparkles size={15} />
           <span>Radar Matrix & Commendations</span>
         </button>
 
@@ -202,15 +221,15 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
           className={`subnav-btn ${activeTab === 'clips' ? 'active' : ''}`}
           onClick={() => { sounds.playClick(); setActiveTab('clips'); }}
         >
-          <Play size={16} />
-          <span>Highlight Clip Vault ({profile.clips.length})</span>
+          <Play size={15} />
+          <span>Clips Vault ({profile.clips.length})</span>
         </button>
 
         <button
           className={`subnav-btn ${activeTab === 'history' ? 'active' : ''}`}
           onClick={() => { sounds.playClick(); setActiveTab('history'); }}
         >
-          <Trophy size={16} />
+          <Trophy size={15} />
           <span>Roster & Studio History</span>
         </button>
 
@@ -218,7 +237,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
           className={`subnav-btn ${activeTab === 'setup' ? 'active' : ''}`}
           onClick={() => { sounds.playClick(); setActiveTab('setup'); }}
         >
-          <Cpu size={16} />
+          <Cpu size={15} />
           <span>Battlestation Specs</span>
         </button>
       </div>
@@ -233,13 +252,13 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
               <span className="badge-interactive">INTERACTIVE POLYGON</span>
             </div>
             <p className="card-caption">
-              Derived from verified Riot tournament telemetry, Faceit match logs, and peer code reviews.
+              Derived from verified Riot tournament telemetry, Faceit match logs, and peer code reviews. Hover/drag vertices to simulate adjustments.
             </p>
 
             <div className="radar-centered-wrap">
               <RadarChart 
                 stats={profile.radarStats} 
-                size={320} 
+                size={310} 
                 interactive={true}
                 onStatChange={onStatChange}
               />
@@ -323,7 +342,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
                 <img src={clip.thumbnail} alt={clip.title} className="clip-thumbnail" />
                 <div className="clip-overlay-gradient" />
                 <div className="clip-play-center">
-                  <Play size={24} fill="#fff" />
+                  <Play size={22} fill="#fff" />
                 </div>
                 <span className="clip-duration-tag">{clip.duration}</span>
                 <span className="clip-cat-badge">{clip.category}</span>

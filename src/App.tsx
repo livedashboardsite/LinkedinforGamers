@@ -332,31 +332,6 @@ export const App: React.FC = () => {
   // Otherwise, render the Product Model UI
   return (
     <div className="app-root">
-      {/* Top Banner allowing return to SaaS page */}
-      <div className="app-mode-switch-bar">
-        <div className="mode-switch-container">
-          <div className="mode-indicator">
-            <span className="mode-ping" />
-            <span>Interactive Product Model UI — Active Live Sandbox</span>
-          </div>
-          <div className="mode-bar-actions">
-            <button 
-              className="mode-theme-btn"
-              onClick={handleToggleTheme}
-              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-            >
-              {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
-            </button>
-            <button 
-              className="mode-switch-btn"
-              onClick={() => { sounds.playClick(); setViewMode('landing'); }}
-            >
-              ← Back to SaaS Overview
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Navigation Header */}
       <Navbar
         currentTab={currentTab}

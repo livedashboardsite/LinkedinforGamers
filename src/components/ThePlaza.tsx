@@ -7,13 +7,11 @@ import {
   Brain, 
   MessageSquare, 
   Share2, 
-  Tag, 
   Radio, 
-  Sparkles,
-  Trophy,
-  Filter,
-  Check,
-  ThumbsUp,
+  Sparkles, 
+  Trophy, 
+  Check, 
+  ThumbsUp, 
   Image as ImageIcon
 } from 'lucide-react';
 import type { Post, UserProfile, PostComment } from '../types';
@@ -46,15 +44,15 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
   
   // Interactive comments state: which post comments are expanded
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({
-    'post_01': true // First post has comments open by default
+    'post_01': true // First post comments open by default
   });
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [copiedPostId, setCopiedPostId] = useState<string | null>(null);
 
   const availableTags = ['#FreeAgent', '#VCTChallengers', '#Gamedev', '#UE5Netcode', '#LFGScrims', '#ClutchClip'];
 
-  const handlePostSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePostSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!postText.trim()) return;
 
     sounds.playSuccess();
@@ -72,7 +70,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
       timeAgo: 'Just now',
       postType,
       content: postText,
-      tags: [selectedTag, '#GamerNetwork'],
+      tags: [selectedTag, '#NexusVerified'],
       media: includeBanner ? {
         type: 'image',
         url: profile.bannerUrl,
@@ -87,6 +85,14 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
     onAddPost(newPost);
     setPostText('');
     setIncludeBanner(false);
+  };
+
+  // Keyboard shortcut to broadcast: Cmd/Ctrl + Enter
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      handlePostSubmit();
+    }
   };
 
   const toggleComments = (postId: string) => {
@@ -126,30 +132,34 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
     <div className="plaza-layout">
       {/* Main Feed Column */}
       <div className="plaza-feed-column">
-        {/* Post Creation Box */}
+        {/* Streamlined Post Creation Box */}
         <div className="glass-card compose-card">
           <div className="compose-top-row">
-            <img src={profile.avatarUrl} alt={profile.gamertag} className="compose-avatar" />
+            <div className="compose-avatar-frame">
+              <img src={profile.avatarUrl} alt={profile.gamertag} className="compose-avatar" />
+              <span className="compose-online-dot" />
+            </div>
             <div className="compose-input-wrapper">
               <textarea
-                placeholder="Broadcast a milestone, scrim result, devlog update, or LFG availability..."
+                placeholder="Broadcast a milestone, scrim result, devlog update, or LFG availability... (⌘+Enter to broadcast)"
                 value={postText}
                 onChange={(e) => setPostText(e.target.value)}
-                rows={3}
+                onKeyDown={handleKeyDown}
+                rows={2}
                 className="compose-textarea"
               />
             </div>
           </div>
 
           <div className="compose-controls-row">
-            {/* Post Category Picker */}
+            {/* Post Category Segmented Pills */}
             <div className="post-type-selector">
               <button
                 type="button"
                 className={`type-chip ${postType === 'lfg' ? 'active' : ''}`}
                 onClick={() => { sounds.playClick(); setPostType('lfg'); }}
               >
-                <Radio size={13} />
+                <Radio size={12} />
                 <span>LFG / Free Agent</span>
               </button>
               <button
@@ -157,7 +167,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                 className={`type-chip ${postType === 'devlog' ? 'active' : ''}`}
                 onClick={() => { sounds.playClick(); setPostType('devlog'); }}
               >
-                <Sparkles size={13} />
+                <Sparkles size={12} />
                 <span>Devlog</span>
               </button>
               <button
@@ -165,8 +175,8 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                 className={`type-chip ${postType === 'clip_drop' ? 'active' : ''}`}
                 onClick={() => { sounds.playClick(); setPostType('clip_drop'); }}
               >
-                <Zap size={13} />
-                <span>Highlight Clip</span>
+                <Zap size={12} />
+                <span>Clutch Clip</span>
               </button>
             </div>
 
@@ -180,43 +190,41 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                 }}
                 title="Attach match banner snapshot"
               >
-                <ImageIcon size={14} />
+                <ImageIcon size={13} />
                 <span>{includeBanner ? 'Banner Attached' : 'Attach Banner'}</span>
               </button>
 
               <button
-                onClick={handlePostSubmit}
+                onClick={() => handlePostSubmit()}
                 disabled={!postText.trim()}
                 className="btn-glow-primary compose-submit-btn"
               >
-                <Send size={15} />
+                <Send size={13} />
                 <span>Broadcast</span>
               </button>
             </div>
           </div>
 
-          {/* Quick Tag Pills */}
-          <div className="compose-tags-row">
-            <span className="tags-label"><Tag size={12} /> Tags:</span>
-            {availableTags.map(tag => (
-              <button
-                key={tag}
-                type="button"
-                className={`tag-pill ${selectedTag === tag ? 'selected' : ''}`}
-                onClick={() => { sounds.playHover(); setSelectedTag(tag); }}
-              >
-                {tag}
-              </button>
-            ))}
+          {/* Quick Tag Pills (Cleaned up horizontal scroll) */}
+          <div className="compose-tags-strip">
+            <span className="tags-label">Tags:</span>
+            <div className="tags-scroll-row">
+              {availableTags.map(tag => (
+                <button
+                  key={tag}
+                  type="button"
+                  className={`tag-pill ${selectedTag === tag ? 'selected' : ''}`}
+                  onClick={() => { sounds.playHover(); setSelectedTag(tag); }}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Feed Filter Bar */}
+        {/* Clean Feed Filter Bar */}
         <div className="feed-filter-bar">
-          <div className="filter-title">
-            <Filter size={15} />
-            <span>Feed Filter:</span>
-          </div>
           <div className="filter-buttons">
             <button 
               className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
@@ -252,7 +260,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
             const currentComments = post.comments || [];
 
             return (
-              <article key={post.id} className="glass-card post-card">
+              <article key={post.id} className="glass-card post-card animate-fade-in">
                 {/* Post Header */}
                 <div className="post-header">
                   <div className="post-author-block">
@@ -318,7 +326,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                       }}
                       title="Good Game (GG)"
                     >
-                      <Flame size={16} />
+                      <Flame size={15} />
                       <span>GG</span>
                       <span className="reaction-count">{post.reactions.gg}</span>
                     </button>
@@ -331,7 +339,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                       }}
                       title="Ice in the Veins / Clutch"
                     >
-                      <Zap size={16} />
+                      <Zap size={15} />
                       <span>Clutch</span>
                       <span className="reaction-count">{post.reactions.clutch}</span>
                     </button>
@@ -344,7 +352,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                       }}
                       title="Teammate Vouched"
                     >
-                      <ShieldCheck size={16} />
+                      <ShieldCheck size={15} />
                       <span>Vouched</span>
                       <span className="reaction-count">{post.reactions.vouched}</span>
                     </button>
@@ -357,7 +365,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                       }}
                       title="200 IQ Shotcall"
                     >
-                      <Brain size={16} />
+                      <Brain size={15} />
                       <span>Big Brain</span>
                       <span className="reaction-count">{post.reactions.brain}</span>
                     </button>
@@ -369,7 +377,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                       onClick={() => toggleComments(post.id)}
                       title="Toggle Comments"
                     >
-                      <MessageSquare size={15} />
+                      <MessageSquare size={14} />
                       <span>{post.commentsCount || currentComments.length}</span>
                     </button>
                     <button 
@@ -377,8 +385,8 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                       onClick={() => handleSharePost(post.id)}
                       title="Share Post Link"
                     >
-                      {copiedPostId === post.id ? <Check size={15} className="text-emerald" /> : <Share2 size={15} />}
-                      <span>{copiedPostId === post.id ? 'Copied!' : post.sharesCount}</span>
+                      {copiedPostId === post.id ? <Check size={14} className="text-emerald" /> : <Share2 size={14} />}
+                      <span>{copiedPostId === post.id ? 'Copied' : post.sharesCount}</span>
                     </button>
                   </div>
                 </div>
@@ -434,7 +442,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                                   className="comment-upvote-btn"
                                   onClick={() => sounds.playClick()}
                                 >
-                                  <ThumbsUp size={12} />
+                                  <ThumbsUp size={11} />
                                   <span>{c.upvotes}</span>
                                 </button>
                               </div>
@@ -456,7 +464,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
         {/* Free Agency Transfer Portal */}
         <div className="glass-card sidebar-card">
           <div className="sidebar-card-header">
-            <Radio className="pulse-icon" size={16} />
+            <Radio className="pulse-icon" size={15} />
             <h3 className="sidebar-card-title">TRANSFER PORTAL</h3>
             <span className="live-badge">LIVE</span>
           </div>
@@ -499,7 +507,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
         {onOpenAI && (
           <div className="glass-card sidebar-card ai-sidebar-card">
             <div className="sidebar-card-header">
-              <Sparkles size={16} className="text-emerald" />
+              <Sparkles size={15} className="text-emerald" />
               <h3 className="sidebar-card-title">AI CAREER CO-PILOT</h3>
             </div>
             <p className="scrim-desc">
@@ -517,7 +525,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
         {/* Quick Scrim Matchmaker Card */}
         <div className="glass-card sidebar-card scrim-sidebar-card">
           <div className="sidebar-card-header">
-            <Trophy size={16} className="text-gold" />
+            <Trophy size={15} className="text-gold" />
             <h3 className="sidebar-card-title">FAST SCRIM QUEUE</h3>
           </div>
           <p className="scrim-desc">
@@ -539,21 +547,6 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
           >
             Enter Tactical Scrim Radar
           </button>
-        </div>
-
-        {/* Hot Tech & Industry Tags */}
-        <div className="glass-card sidebar-card">
-          <div className="sidebar-card-header">
-            <Tag size={16} />
-            <h3 className="sidebar-card-title">TRENDING IN GAMING</h3>
-          </div>
-          <div className="trending-tags-cloud">
-            <span className="trend-pill">#VCTAmericas (14.2k)</span>
-            <span className="trend-pill">#UE5Nanite (8.9k)</span>
-            <span className="trend-pill">#FaceitSeason3 (6.4k)</span>
-            <span className="trend-pill">#IndieGameDev (11.1k)</span>
-            <span className="trend-pill">#RollbackNetcode (4.3k)</span>
-          </div>
         </div>
       </aside>
     </div>
