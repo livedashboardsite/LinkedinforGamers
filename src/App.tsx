@@ -13,6 +13,7 @@ import { AIModal } from './components/AIModal';
 import { CommandPalette } from './components/CommandPalette';
 import { NotificationsDropdown } from './components/NotificationsDropdown';
 import { MobileBottomNav } from './components/MobileBottomNav';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import './App.css';
 
 import { 
@@ -36,18 +37,26 @@ export const App: React.FC = () => {
   // Theme: 'dark' (Night, Rose, Lemon) or 'light'
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('nexus_theme');
-      if (saved === 'light' || saved === 'dark') return saved;
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        return 'light';
+      try {
+        const saved = localStorage.getItem('nexus_theme');
+        if (saved === 'light' || saved === 'dark') return saved;
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+          return 'light';
+        }
+      } catch {
+        // storage disabled
       }
     }
     return 'dark';
   });
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('nexus_theme', theme);
+    try {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('nexus_theme', theme);
+    } catch {
+      // ignore
+    }
   }, [theme]);
 
   const handleToggleTheme = () => {
@@ -58,8 +67,12 @@ export const App: React.FC = () => {
   // Sound enable state
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('nexus_sound');
-      return saved !== 'false';
+      try {
+        const saved = localStorage.getItem('nexus_sound');
+        return saved !== 'false';
+      } catch {
+        return true;
+      }
     }
     return true;
   });
@@ -68,7 +81,11 @@ export const App: React.FC = () => {
     const next = !soundEnabled;
     setSoundEnabled(next);
     sounds.enabled = next;
-    localStorage.setItem('nexus_sound', String(next));
+    try {
+      localStorage.setItem('nexus_sound', String(next));
+    } catch {
+      // ignore
+    }
     if (next) sounds.playClick();
   };
 
@@ -76,64 +93,125 @@ export const App: React.FC = () => {
   const [viewMode, setViewMode] = useState<'landing' | 'app'>('landing');
   const [currentTab, setCurrentTab] = useState<'plaza' | 'profile' | 'jobs' | 'guilds' | 'scrims'>('profile');
   
-  // Persistent State: Profile
+  // Persistent State: Profile with schema reconciliation
   const [profile, setProfile] = useState<UserProfile>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('nexus_profile_v2');
-      if (saved) {
-        try { return JSON.parse(saved); } catch { /* ignore */ }
+      try {
+        const saved = localStorage.getItem('nexus_profile_v2');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            return {
+              ...initialProfile,
+              ...parsed,
+              radarStats: Array.isArray(parsed.radarStats) && parsed.radarStats.length > 0 ? parsed.radarStats : initialProfile.radarStats,
+              verifiedAccounts: Array.isArray(parsed.verifiedAccounts) && parsed.verifiedAccounts.length > 0 ? parsed.verifiedAccounts : initialProfile.verifiedAccounts,
+              commendations: Array.isArray(parsed.commendations) && parsed.commendations.length > 0 ? parsed.commendations : initialProfile.commendations,
+              clips: Array.isArray(parsed.clips) && parsed.clips.length > 0 ? parsed.clips : initialProfile.clips,
+              rosterHistory: Array.isArray(parsed.rosterHistory) && parsed.rosterHistory.length > 0 ? parsed.rosterHistory : initialProfile.rosterHistory,
+              hardware: Array.isArray(parsed.hardware) && parsed.hardware.length > 0 ? parsed.hardware : initialProfile.hardware
+            };
+          }
+        }
+      } catch (err) {
+        console.warn('Reconciled profile state:', err);
       }
     }
     return initialProfile;
   });
 
   useEffect(() => {
-    localStorage.setItem('nexus_profile_v2', JSON.stringify(profile));
+    try {
+      localStorage.setItem('nexus_profile_v2', JSON.stringify(profile));
+    } catch {
+      // quota or private browsing
+    }
   }, [profile]);
 
-  // Persistent State: Posts
+  // Persistent State: Posts with schema reconciliation
   const [posts, setPosts] = useState<Post[]>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('nexus_posts_v2');
-      if (saved) {
-        try { return JSON.parse(saved); } catch { /* ignore */ }
+      try {
+        const saved = localStorage.getItem('nexus_posts_v2');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed.map((p, idx) => ({
+              ...initialPosts[idx % initialPosts.length],
+              ...p,
+              reactions: {
+                gg: p.reactions?.gg ?? 0,
+                clutch: p.reactions?.clutch ?? 0,
+                vouched: p.reactions?.vouched ?? 0,
+                brain: p.reactions?.brain ?? 0,
+                ...(p.reactions || {})
+              },
+              tags: Array.isArray(p.tags) && p.tags.length > 0 ? p.tags : ['#NexusVerified'],
+              comments: Array.isArray(p.comments) ? p.comments : []
+            }));
+          }
+        }
+      } catch (err) {
+        console.warn('Reconciled posts state:', err);
       }
     }
     return initialPosts;
   });
 
   useEffect(() => {
-    localStorage.setItem('nexus_posts_v2', JSON.stringify(posts));
+    try {
+      localStorage.setItem('nexus_posts_v2', JSON.stringify(posts));
+    } catch {
+      // quota
+    }
   }, [posts]);
 
-  // Persistent State: Jobs
+  // Persistent State: Jobs with schema reconciliation
   const [jobs, setJobs] = useState<JobOpportunity[]>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('nexus_jobs_v2');
-      if (saved) {
-        try { return JSON.parse(saved); } catch { /* ignore */ }
+      try {
+        const saved = localStorage.getItem('nexus_jobs_v2');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (err) {
+        console.warn('Reconciled jobs state:', err);
       }
     }
     return initialJobs;
   });
 
   useEffect(() => {
-    localStorage.setItem('nexus_jobs_v2', JSON.stringify(jobs));
+    try {
+      localStorage.setItem('nexus_jobs_v2', JSON.stringify(jobs));
+    } catch {
+      // quota
+    }
   }, [jobs]);
 
   // Persistent State: Notifications
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('nexus_notifications_v2');
-      if (saved) {
-        try { return JSON.parse(saved); } catch { /* ignore */ }
+      try {
+        const saved = localStorage.getItem('nexus_notifications_v2');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (err) {
+        console.warn('Reconciled notifications state:', err);
       }
     }
     return initialNotifications;
   });
 
   useEffect(() => {
-    localStorage.setItem('nexus_notifications_v2', JSON.stringify(notifications));
+    try {
+      localStorage.setItem('nexus_notifications_v2', JSON.stringify(notifications));
+    } catch {
+      // quota
+    }
   }, [notifications]);
 
   // Modals state
@@ -202,7 +280,7 @@ export const App: React.FC = () => {
           name: profile.realName,
           handle: profile.handle,
           avatar: profile.avatarUrl,
-          rankBadge: profile.verifiedAccounts[0]?.badge || 'Radiant #142'
+          rankBadge: profile?.verifiedAccounts?.[0]?.badge || 'Radiant #142'
         },
         content: commentText,
         timeAgo: 'Just now',
@@ -362,50 +440,52 @@ export const App: React.FC = () => {
 
       {/* Main Container */}
       <main className="main-content-area">
-        {currentTab === 'plaza' && (
-          <ThePlaza
-            posts={posts}
-            profile={profile}
-            onAddPost={handleAddPost}
-            onReaction={handleReaction}
-            onAddComment={handleAddComment}
-            onSelectTab={setCurrentTab}
-            onOpenAI={() => setIsAIOpen(true)}
-          />
-        )}
+        <ErrorBoundary fallbackTitle="MODULE RENDER RESTORED">
+          {currentTab === 'plaza' && (
+            <ThePlaza
+              posts={posts}
+              profile={profile}
+              onAddPost={handleAddPost}
+              onReaction={handleReaction}
+              onAddComment={handleAddComment}
+              onSelectTab={setCurrentTab}
+              onOpenAI={() => setIsAIOpen(true)}
+            />
+          )}
 
-        {currentTab === 'profile' && (
-          <CharacterSheet
-            profile={profile}
-            onUpdateStatus={handleUpdateStatus}
-            onVouchCommendation={handleVouchCommendation}
-            onOpenEditModal={() => setIsEditProfileOpen(true)}
-            onSelectClip={(clip) => setActiveClip(clip)}
-            onStatChange={handleStatChange}
-            onOpenAI={() => setIsAIOpen(true)}
-          />
-        )}
+          {currentTab === 'profile' && (
+            <CharacterSheet
+              profile={profile}
+              onUpdateStatus={handleUpdateStatus}
+              onVouchCommendation={handleVouchCommendation}
+              onOpenEditModal={() => setIsEditProfileOpen(true)}
+              onSelectClip={(clip) => setActiveClip(clip)}
+              onStatChange={handleStatChange}
+              onOpenAI={() => setIsAIOpen(true)}
+            />
+          )}
 
-        {currentTab === 'jobs' && (
-          <LFGJobBoard
-            jobs={jobs}
-            onOpenApplyModal={(job) => setApplyingJob(job)}
-            onToggleSaveJob={handleToggleSaveJob}
-            onOpenAIWithJob={handleOpenAIWithJob}
-          />
-        )}
+          {currentTab === 'jobs' && (
+            <LFGJobBoard
+              jobs={jobs}
+              onOpenApplyModal={(job) => setApplyingJob(job)}
+              onToggleSaveJob={handleToggleSaveJob}
+              onOpenAIWithJob={handleOpenAIWithJob}
+            />
+          )}
 
-        {currentTab === 'guilds' && (
-          <GuildsDirectory
-            guilds={initialGuilds}
-            onOpenApplyModal={(fakeJob) => setApplyingJob(fakeJob)}
-            onSelectTab={setCurrentTab}
-          />
-        )}
+          {currentTab === 'guilds' && (
+            <GuildsDirectory
+              guilds={initialGuilds}
+              onOpenApplyModal={(fakeJob) => setApplyingJob(fakeJob)}
+              onSelectTab={setCurrentTab}
+            />
+          )}
 
-        {currentTab === 'scrims' && (
-          <ScrimRadar />
-        )}
+          {currentTab === 'scrims' && (
+            <ScrimRadar />
+          )}
+        </ErrorBoundary>
       </main>
 
       {/* Mobile Bottom Dock Navigation (visible on mobile / < 768px) */}

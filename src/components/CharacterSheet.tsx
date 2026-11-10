@@ -45,23 +45,32 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
 
   const handleCopyCard = () => {
     sounds.playSuccess();
-    navigator.clipboard?.writeText(window.location.href);
+    try {
+      if (navigator?.clipboard?.writeText) {
+        navigator.clipboard.writeText(window.location.href).catch(() => {});
+      }
+    } catch {
+      // safe fallback for mobile webviews
+    }
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2500);
   };
 
   const getHardwareIcon = (cat: string) => {
-    if (cat.toLowerCase().includes('graphics') || cat.toLowerCase().includes('processor')) return <Cpu size={16} />;
-    if (cat.toLowerCase().includes('display')) return <Monitor size={16} />;
-    if (cat.toLowerCase().includes('mouse')) return <Mouse size={16} />;
-    if (cat.toLowerCase().includes('keyboard')) return <Keyboard size={16} />;
+    if (!cat) return <Layers size={16} />;
+    const c = cat.toLowerCase();
+    if (c.includes('graphics') || c.includes('processor')) return <Cpu size={16} />;
+    if (c.includes('display')) return <Monitor size={16} />;
+    if (c.includes('mouse')) return <Mouse size={16} />;
+    if (c.includes('keyboard')) return <Keyboard size={16} />;
     return <Layers size={16} />;
   };
 
-  // Calculate dynamic average rating from radar stats
-  const averageRating = Math.round(
-    profile.radarStats.reduce((acc, curr) => acc + curr.value, 0) / profile.radarStats.length
-  );
+  // Calculate dynamic average rating from radar stats with bulletproof fallbacks
+  const radarList = profile?.radarStats || [];
+  const averageRating = radarList.length > 0
+    ? Math.round(radarList.reduce((acc, curr) => acc + (curr?.value || 0), 0) / radarList.length)
+    : 94;
 
   return (
     <div className="character-sheet-container">
@@ -187,7 +196,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
 
       {/* Verified Game Ecosystem Row (Steam, Riot, Faceit, Twitch, GitHub) */}
       <div className="verified-accounts-grid">
-        {profile.verifiedAccounts.map((acc, idx) => (
+        {(profile?.verifiedAccounts || []).map((acc, idx) => (
           <div 
             key={idx} 
             className="glass-card verified-account-card"
@@ -222,7 +231,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
           onClick={() => { sounds.playClick(); setActiveTab('clips'); }}
         >
           <Play size={15} />
-          <span>Clips Vault ({profile.clips.length})</span>
+          <span>Clips Vault ({(profile?.clips || []).length})</span>
         </button>
 
         <button
@@ -257,7 +266,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
 
             <div className="radar-centered-wrap">
               <RadarChart 
-                stats={profile.radarStats} 
+                stats={profile?.radarStats || []} 
                 size={310} 
                 interactive={true}
                 onStatChange={onStatChange}
@@ -266,7 +275,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
 
             {/* Stat Breakdown Bars */}
             <div className="stat-bars-list">
-              {profile.radarStats.map((st, i) => (
+              {(profile?.radarStats || []).map((st, i) => (
                 <div key={i} className="stat-bar-row">
                   <div className="stat-bar-labels">
                     <span className="stat-bar-name">{st.label}</span>
@@ -291,7 +300,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
             </p>
 
             <div className="commendations-list">
-              {profile.commendations.map((c) => (
+              {(profile?.commendations || []).map((c) => (
                 <div key={c.id} className="commendation-card">
                   <div className="commend-icon-box">{c.icon}</div>
                   <div className="commend-details">
@@ -329,7 +338,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
       {/* TAB CONTENT: Highlight Clips */}
       {activeTab === 'clips' && (
         <div className="clips-grid">
-          {profile.clips.map((clip) => (
+          {(profile?.clips || []).map((clip) => (
             <div
               key={clip.id}
               className="glass-card clip-card"
@@ -363,7 +372,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
       {/* TAB CONTENT: Roster History */}
       {activeTab === 'history' && (
         <div className="history-timeline-container">
-          {profile.rosterHistory.map((rh) => (
+          {(profile?.rosterHistory || []).map((rh) => (
             <div key={rh.id} className="glass-card history-card">
               <img src={rh.logo} alt={rh.team} className="history-team-logo" />
               <div className="history-content">
@@ -378,7 +387,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
                   </div>
                 </div>
                 <ul className="history-highlights">
-                  {rh.highlights.map((h, idx) => (
+                  {(rh.highlights || []).map((h, idx) => (
                     <li key={idx}>
                       <Zap size={13} className="text-emerald" />
                       <span>{h}</span>
@@ -394,7 +403,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
       {/* TAB CONTENT: Battlestation Hardware */}
       {activeTab === 'setup' && (
         <div className="hardware-grid">
-          {profile.hardware.map((hw, idx) => (
+          {(profile?.hardware || []).map((hw, idx) => (
             <div key={idx} className="glass-card hardware-card">
               <div className="hw-icon-wrapper">{getHardwareIcon(hw.category)}</div>
               <div className="hw-info">

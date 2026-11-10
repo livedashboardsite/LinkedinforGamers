@@ -70,7 +70,7 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
             </p>
             <div className="telemetry-badge">
               <ShieldCheck size={16} />
-              <span>Verified Identity Signed: {profile.gamertag} // {profile.verifiedAccounts[0]?.badge}</span>
+              <span>Verified Identity Signed: {profile.gamertag} // {profile?.verifiedAccounts?.[0]?.badge || 'Radiant #142'}</span>
             </div>
           </div>
         ) : (

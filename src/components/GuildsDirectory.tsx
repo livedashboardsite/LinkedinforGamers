@@ -35,13 +35,13 @@ export const GuildsDirectory: React.FC<GuildsDirectoryProps> = ({
     }));
   };
 
-  const filtered = guilds.filter(g => {
+  const filtered = (guilds || []).filter(g => {
     if (!search.trim()) return true;
     const q = search.toLowerCase();
-    return g.name.toLowerCase().includes(q) || 
-           g.game.toLowerCase().includes(q) || 
-           g.division.toLowerCase().includes(q) || 
-           g.description.toLowerCase().includes(q);
+    return (g.name || '').toLowerCase().includes(q) || 
+           (g.game || '').toLowerCase().includes(q) || 
+           (g.division || '').toLowerCase().includes(q) || 
+           (g.description || '').toLowerCase().includes(q);
   });
 
   return (

@@ -40,7 +40,8 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
     }
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const list = notifications || [];
+  const unreadCount = list.filter(n => !n.read).length;
 
   return (
     <div className="notif-dropdown-wrapper">
@@ -79,12 +80,12 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
 
         {/* List */}
         <div className="notif-list">
-          {notifications.length === 0 ? (
+          {list.length === 0 ? (
             <div className="notif-empty">
               <span>All caught up! No active alerts.</span>
             </div>
           ) : (
-            notifications.map((n) => (
+            list.map((n) => (
               <div 
                 key={n.id}
                 className={`notif-item ${!n.read ? 'unread' : ''}`}

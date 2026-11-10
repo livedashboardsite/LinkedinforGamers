@@ -994,6 +994,96 @@ body {
 }
 
 /* ========================================================
+   ERROR BOUNDARY & FAIL-SAFE UI
+   ======================================================== */
+.error-boundary-screen {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.error-boundary-card {
+  max-width: 580px;
+  width: 100%;
+  padding: 32px 24px;
+  text-align: center;
+  border: 1px solid rgba(255, 32, 110, 0.3) !important;
+  background: rgba(14, 18, 14, 0.95) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+}
+
+.error-icon-pulse {
+  display: inline-flex;
+  padding: 16px;
+  background: rgba(255, 32, 110, 0.12);
+  border: 1px solid rgba(255, 32, 110, 0.3);
+  border-radius: 50%;
+  margin-bottom: 16px;
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.error-heading {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--color-rose);
+  margin-bottom: 10px;
+}
+
+.error-subtext {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.error-actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.error-btn {
+  width: 100%;
+  justify-content: center;
+  height: 42px;
+}
+
+.error-tech-details {
+  text-align: left;
+  margin-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+}
+
+.error-details-summary {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  cursor: pointer;
+  outline: none;
+}
+
+.error-stack-text {
+  margin-top: 8px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: #ff88a3;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 160px;
+}
+
+/* ========================================================
    DEVICE VIEWPOINT BREAKPOINTS (ULTRAWIDE -> MOBILE)
    ======================================================== */
 
@@ -1086,8 +1176,59 @@ body {
     display: none !important;
   }
 
-  .btn-saas-switch {
+  /* Compact Navbar Actions for Mobile */
+  .nav-ai-scout-btn {
     display: none !important;
+  }
+
+  .btn-saas-switch {
+    display: inline-flex !important;
+    padding: 6px 8px !important;
+    height: 32px !important;
+    gap: 4px !important;
+    font-size: 11px !important;
+  }
+
+  .saas-switch-text {
+    display: none !important;
+  }
+
+  .user-info-quick {
+    display: none !important;
+  }
+
+  .user-quick-chip {
+    padding: 2px !important;
+    background: transparent !important;
+    border: none !important;
+    gap: 0 !important;
+  }
+
+  .nav-sandbox-tag {
+    display: none !important;
+  }
+
+  .brand-subtitle {
+    display: none !important;
+  }
+
+  .brand-title {
+    font-size: 15px !important;
+  }
+
+  .navbar-container {
+    padding: 8px 12px !important;
+    gap: 8px !important;
+  }
+
+  .nav-actions {
+    gap: 6px !important;
+  }
+
+  .sound-toggle-btn, .theme-toggle-btn, .notif-btn {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
   }
 
   .saas-nav-links {
@@ -1114,12 +1255,13 @@ body {
 
   /* Main Container padding on mobile */
   .main-content-area {
-    padding: 0 14px 20px 14px;
-    margin: 16px auto;
+    padding: 0 12px 20px 12px;
+    margin: 12px auto;
   }
 
   .app-root {
     padding-bottom: calc(76px + env(safe-area-inset-bottom, 8px));
+    overflow-x: hidden;
   }
 
   /* Hero Section */

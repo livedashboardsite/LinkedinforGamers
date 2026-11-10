@@ -9,16 +9,25 @@ interface RadarChartProps {
 }
 
 export const RadarChart: React.FC<RadarChartProps> = ({
-  stats,
+  stats = [],
   size = 320,
   interactive = false,
   onStatChange
 }) => {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
+  // Safe guard: return placeholder if stats is missing or empty
+  if (!stats || !Array.isArray(stats) || stats.length === 0) {
+    return (
+      <div className="radar-chart-container radar-empty-state" style={{ width: '100%', maxWidth: `${size}px`, aspectRatio: '1 / 1' }}>
+        <p className="text-muted" style={{ textAlign: 'center', paddingTop: '40%' }}>Telemetry Matrix Initializing...</p>
+      </div>
+    );
+  }
+
   const center = size / 2;
-  const radius = (size / 2) - 40;
-  const totalSides = stats.length;
+  const radius = Math.max(20, (size / 2) - 40);
+  const totalSides = Math.max(3, stats.length);
 
   const getCoordinates = (value: number, index: number, maxRadius: number) => {
     const angle = (Math.PI * 2 / totalSides) * index - Math.PI / 2;
@@ -155,17 +164,17 @@ export const RadarChart: React.FC<RadarChartProps> = ({
       </svg>
 
       {/* Floating tooltip when vertex hovered */}
-      {hoveredIdx !== null && (
+      {hoveredIdx !== null && stats[hoveredIdx] && (
         <div className="radar-tooltip">
-          <span className="tooltip-name">{stats[hoveredIdx].label}</span>
-          <span className="tooltip-val">{stats[hoveredIdx].value}/100</span>
+          <span className="tooltip-name">{stats[hoveredIdx]?.label}</span>
+          <span className="tooltip-val">{stats[hoveredIdx]?.value}/100</span>
           {interactive && (
             <div className="tooltip-slider-row">
               <input
                 type="range"
                 min="50"
                 max="100"
-                value={stats[hoveredIdx].value}
+                value={stats[hoveredIdx]?.value ?? 80}
                 onChange={(e) => onStatChange?.(hoveredIdx, Number(e.target.value))}
                 className="stat-slider"
               />

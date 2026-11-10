@@ -12,7 +12,8 @@ import {
   Sparkles, 
   Sun, 
   Moon,
-  Bot
+  Bot,
+  Home
 } from 'lucide-react';
 import type { UserProfile, NotificationItem } from '../types';
 import { sounds } from '../utils/audio';
@@ -181,7 +182,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={onNavigateToLanding}
             title="Return to Public SaaS Overview"
           >
-            <span>SaaS Overview</span>
+            <Home size={14} className="saas-switch-home-icon" />
+            <span className="saas-switch-text">SaaS Overview</span>
           </button>
 
           {/* Sound FX Toggle */}

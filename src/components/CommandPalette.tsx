@@ -133,7 +133,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   ];
 
   // Add matching jobs
-  const jobActions = jobs.map(j => ({
+  const jobActions = (jobs || []).map(j => ({
     id: `job-${j.id}`,
     category: 'Opportunities',
     title: `${j.organization} — ${j.title}`,

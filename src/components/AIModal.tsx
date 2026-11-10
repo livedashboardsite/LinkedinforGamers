@@ -68,7 +68,10 @@ export const AIModal: React.FC<AIModalProps> = ({
     setIsGeneratingPitch(true);
     setCopiedPitch(false);
 
-    const targetJob = jobs.find(j => j.id === selectedJobId) || jobs[0];
+    const targetJob = (jobs && jobs.length > 0) ? (jobs.find(j => j.id === selectedJobId) || jobs[0]) : null;
+    const orgName = targetJob?.organization || 'Esports Team';
+    const roleTitle = targetJob?.title || 'Starting Player';
+    const verifiedRank = profile?.verifiedAccounts?.[0]?.badge || 'Radiant #142';
 
     setTimeout(() => {
       setIsGeneratingPitch(false);
@@ -76,11 +79,11 @@ export const AIModal: React.FC<AIModalProps> = ({
 
       let pitch = '';
       if (selectedTone === 'tactical') {
-        pitch = `Dear ${targetJob.organization} Scouting Staff,\n\nI am formally submitting my verified Character Sheet for the ${targetJob.title} opening. As a ${profile.verifiedAccounts[0]?.badge || 'Radiant'} competitor with a verified 97/100 Tactical IGL and 94/100 Mechanics rating on Nexus, I specialize in disciplined mid-round shotcalling and round-reset composure. In my recent trial with Sentinels Academy, I held an 18.4% clutch win rate in overtime rounds. My telemetry logs, crosshair placement stats, and uncompressed match VODs are verified on my passport.\n\nI am ready for immediate scrim trials.\n\nRespectfully,\n${profile.realName} (${profile.gamertag})`;
+        pitch = `Dear ${orgName} Scouting Staff,\n\nI am formally submitting my verified Character Sheet for the ${roleTitle} opening. As a ${verifiedRank} competitor with a verified 97/100 Tactical IGL and 94/100 Mechanics rating on Nexus, I specialize in disciplined mid-round shotcalling and round-reset composure. In my recent trial with Sentinels Academy, I held an 18.4% clutch win rate in overtime rounds. My telemetry logs, crosshair placement stats, and uncompressed match VODs are verified on my passport.\n\nI am ready for immediate scrim trials.\n\nRespectfully,\n${profile.realName} (${profile.gamertag})`;
       } else if (selectedTone === 'aggressive') {
-        pitch = `To ${targetJob.organization} Management,\n\nIf you need an immediate impact player for ${targetJob.title}, look at my match telemetry: Radiant #142, 94 Aim rating, and over 180 verified overtime clutch commendations. I do not play for stats—I play for round wins and late-game rounds where most crumble. My character sheet has zero fluff and full API verification from Riot and Steam. Put me in the server this Friday against your current starters and check the scoreboard.\n\nReady when you are.\n${profile.gamertag}`;
+        pitch = `To ${orgName} Management,\n\nIf you need an immediate impact player for ${roleTitle}, look at my match telemetry: ${verifiedRank}, 94 Aim rating, and over 180 verified overtime clutch commendations. I do not play for stats—I play for round wins and late-game rounds where most crumble. My character sheet has zero fluff and full API verification from Riot and Steam. Put me in the server this Friday against your current starters and check the scoreboard.\n\nReady when you are.\n${profile.gamertag}`;
       } else {
-        pitch = `Greetings ${targetJob.organization} Engineering & Production Leads,\n\nI am writing to express my strong interest in the ${targetJob.title} position. Combining high-tier competitive gaming insight (${profile.verifiedAccounts[0]?.badge}) with deep Unreal Engine 5 multiplayer systems development (88/100 Matrix), I bridge the gap between pro players and game feel. I have engineered deterministic rollback netcode, custom client prediction, and low-latency networking architectures that cut packet replication overhead by 42%. Attached is my live telemetry portfolio and GitHub repositories.\n\nBest regards,\n${profile.realName}`;
+        pitch = `Greetings ${orgName} Engineering & Production Leads,\n\nI am writing to express my strong interest in the ${roleTitle} position. Combining high-tier competitive gaming insight (${verifiedRank}) with deep Unreal Engine 5 multiplayer systems development (88/100 Matrix), I bridge the gap between pro players and game feel. I have engineered deterministic rollback netcode, custom client prediction, and low-latency networking architectures that cut packet replication overhead by 42%. Attached is my live telemetry portfolio and GitHub repositories.\n\nBest regards,\n${profile.realName}`;
       }
 
       setGeneratedPitch(pitch);
@@ -89,7 +92,13 @@ export const AIModal: React.FC<AIModalProps> = ({
 
   const handleCopyPitch = () => {
     sounds.playSuccess();
-    navigator.clipboard?.writeText(generatedPitch);
+    try {
+      if (navigator?.clipboard?.writeText) {
+        navigator.clipboard.writeText(generatedPitch).catch(() => {});
+      }
+    } catch {
+      // safe fallback
+    }
     setCopiedPitch(true);
     setTimeout(() => setCopiedPitch(false), 2500);
   };

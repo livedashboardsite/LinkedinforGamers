@@ -4,6 +4,7 @@ import {
   Sparkles, 
   Briefcase, 
   Crosshair,
+  Users,
   Bot
 } from 'lucide-react';
 import { sounds } from '../utils/audio';
@@ -31,7 +32,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         className={`mobile-nav-btn ${currentTab === 'plaza' ? 'active' : ''}`}
         onClick={() => handleTabClick('plaza')}
       >
-        <Gamepad2 size={20} />
+        <Gamepad2 size={18} />
         <span>Plaza</span>
       </button>
 
@@ -39,8 +40,16 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         className={`mobile-nav-btn ${currentTab === 'profile' ? 'active' : ''}`}
         onClick={() => handleTabClick('profile')}
       >
-        <Sparkles size={20} />
-        <span>Profile</span>
+        <Sparkles size={18} />
+        <span>Sheet</span>
+      </button>
+
+      <button 
+        className={`mobile-nav-btn ${currentTab === 'guilds' ? 'active' : ''}`}
+        onClick={() => handleTabClick('guilds')}
+      >
+        <Users size={18} />
+        <span>Guilds</span>
       </button>
 
       {/* Floating Center AI Button */}
@@ -52,15 +61,15 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         }}
         title="Open AI Scout"
       >
-        <Bot size={22} className="text-emerald" />
-        <span className="mobile-ai-lbl">AI Scout</span>
+        <Bot size={20} className="text-emerald" />
+        <span className="mobile-ai-lbl">AI</span>
       </button>
 
       <button 
         className={`mobile-nav-btn ${currentTab === 'jobs' ? 'active' : ''}`}
         onClick={() => handleTabClick('jobs')}
       >
-        <Briefcase size={20} />
+        <Briefcase size={18} />
         <span>Careers</span>
       </button>
 
@@ -68,7 +77,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         className={`mobile-nav-btn ${currentTab === 'scrims' ? 'active' : ''}`}
         onClick={() => handleTabClick('scrims')}
       >
-        <Crosshair size={20} />
+        <Crosshair size={18} />
         <span>Scrims</span>
       </button>
     </nav>

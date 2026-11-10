@@ -42,10 +42,10 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
     }
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      const matchTitle = job.title.toLowerCase().includes(q);
-      const matchOrg = job.organization.toLowerCase().includes(q);
-      const matchEngine = job.gameOrEngine.toLowerCase().includes(q);
-      const matchTags = job.tags.some(t => t.toLowerCase().includes(q));
+      const matchTitle = (job.title || '').toLowerCase().includes(q);
+      const matchOrg = (job.organization || '').toLowerCase().includes(q);
+      const matchEngine = (job.gameOrEngine || '').toLowerCase().includes(q);
+      const matchTags = (job.tags || []).some(t => (t || '').toLowerCase().includes(q));
       if (!matchTitle && !matchOrg && !matchEngine && !matchTags) return false;
     }
     return true;
@@ -212,7 +212,7 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
                   <p className="job-description-text">{job.description}</p>
 
                   <div className="job-tags-row">
-                    {job.tags.map((tag, idx) => (
+                    {(job.tags || []).map((tag, idx) => (
                       <span key={idx} className="job-tag-chip">{tag}</span>
                     ))}
                   </div>

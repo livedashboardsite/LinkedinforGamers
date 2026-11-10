@@ -65,7 +65,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
         avatar: profile.avatarUrl,
         title: profile.title,
         isVerified: true,
-        rankBadge: profile.verifiedAccounts[0]?.badge || 'Radiant #142'
+        rankBadge: profile?.verifiedAccounts?.[0]?.badge || 'Radiant #142'
       },
       timeAgo: 'Just now',
       postType,
@@ -115,7 +115,13 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
 
   const handleSharePost = (postId: string) => {
     sounds.playSuccess();
-    navigator.clipboard?.writeText(`${window.location.origin}/#plaza-${postId}`);
+    try {
+      if (navigator?.clipboard?.writeText) {
+        navigator.clipboard.writeText(`${window.location.origin}/#plaza-${postId}`).catch(() => {});
+      }
+    } catch {
+      // safe fallback for mobile
+    }
     setCopiedPostId(postId);
     setTimeout(() => setCopiedPostId(null), 2500);
   };
@@ -310,7 +316,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
 
                 {/* Tags */}
                 <div className="post-tags-list">
-                  {post.tags.map((t, idx) => (
+                  {(post.tags || []).map((t, idx) => (
                     <span key={idx} className="post-tag-item">{t}</span>
                   ))}
                 </div>
@@ -328,7 +334,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                     >
                       <Flame size={15} />
                       <span>GG</span>
-                      <span className="reaction-count">{post.reactions.gg}</span>
+                      <span className="reaction-count">{post.reactions?.gg ?? 0}</span>
                     </button>
 
                     <button
@@ -341,7 +347,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                     >
                       <Zap size={15} />
                       <span>Clutch</span>
-                      <span className="reaction-count">{post.reactions.clutch}</span>
+                      <span className="reaction-count">{post.reactions?.clutch ?? 0}</span>
                     </button>
 
                     <button
@@ -354,7 +360,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                     >
                       <ShieldCheck size={15} />
                       <span>Vouched</span>
-                      <span className="reaction-count">{post.reactions.vouched}</span>
+                      <span className="reaction-count">{post.reactions?.vouched ?? 0}</span>
                     </button>
 
                     <button
@@ -367,7 +373,7 @@ export const ThePlaza: React.FC<ThePlazaProps> = ({
                     >
                       <Brain size={15} />
                       <span>Big Brain</span>
-                      <span className="reaction-count">{post.reactions.brain}</span>
+                      <span className="reaction-count">{post.reactions?.brain ?? 0}</span>
                     </button>
                   </div>
 
