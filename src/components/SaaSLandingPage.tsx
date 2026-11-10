@@ -133,6 +133,36 @@ export const SaaSLandingPage: React.FC<SaaSLandingPageProps> = ({
             >
               Pricing
             </a>
+            <div className="mobile-drawer-quick-tabs">
+              <span className="drawer-quick-lbl">EXPLORE PRODUCT MODULES:</span>
+              <div className="drawer-quick-buttons">
+                <button 
+                  onClick={() => { sounds.playClick(); setIsMobileMenuOpen(false); onLaunchApp('profile'); }}
+                  className="drawer-quick-pill"
+                >
+                  Character Sheet
+                </button>
+                <button 
+                  onClick={() => { sounds.playClick(); setIsMobileMenuOpen(false); onLaunchApp('plaza'); }}
+                  className="drawer-quick-pill"
+                >
+                  The Plaza
+                </button>
+                <button 
+                  onClick={() => { sounds.playClick(); setIsMobileMenuOpen(false); onLaunchApp('jobs'); }}
+                  className="drawer-quick-pill"
+                >
+                  LFG Jobs
+                </button>
+                <button 
+                  onClick={() => { sounds.playClick(); setIsMobileMenuOpen(false); onLaunchApp('scrims'); }}
+                  className="drawer-quick-pill"
+                >
+                  Scrim Radar
+                </button>
+              </div>
+            </div>
+
             <div className="mobile-drawer-actions">
               <button 
                 onClick={() => {
