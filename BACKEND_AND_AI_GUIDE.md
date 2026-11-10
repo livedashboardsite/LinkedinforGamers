@@ -249,3 +249,4 @@ git push -u origin main
    - `GEMINI_API_KEY`: (Your Google Gemini AI API key)
 5. Click **Deploy**!
    Your site will be live instantly with global CDN caching and SSL certificates.
+
