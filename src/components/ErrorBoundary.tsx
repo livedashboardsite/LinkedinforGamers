@@ -42,6 +42,11 @@ export class ErrorBoundary extends Component<Props, State> {
   handleHardReset = () => {
     try {
       if (typeof window !== 'undefined') {
+        localStorage.removeItem('nexus_theme_v3');
+        localStorage.removeItem('nexus_profile_v3');
+        localStorage.removeItem('nexus_posts_v3');
+        localStorage.removeItem('nexus_jobs_v3');
+        localStorage.removeItem('nexus_notifications_v3');
         localStorage.removeItem('nexus_profile_v2');
         localStorage.removeItem('nexus_posts_v2');
         localStorage.removeItem('nexus_jobs_v2');
@@ -124,3 +129,4 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+

@@ -34,26 +34,23 @@ import type {
 import { sounds } from './utils/audio';
 
 export const App: React.FC = () => {
-  // Theme: 'dark' (Night, Rose, Lemon) or 'light'
+  // Theme: Always defaults to 'dark' for the cyberpunk esports aesthetic
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('nexus_theme');
+        const saved = localStorage.getItem('nexus_theme_v3');
         if (saved === 'light' || saved === 'dark') return saved;
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-          return 'light';
-        }
       } catch {
         // storage disabled
       }
     }
-    return 'dark';
+    return 'dark'; // Always default to Cyberpunk Night (#0C0F0A)
   });
 
   useEffect(() => {
     try {
       document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('nexus_theme', theme);
+      localStorage.setItem('nexus_theme_v3', theme);
     } catch {
       // ignore
     }
@@ -97,7 +94,7 @@ export const App: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('nexus_profile_v2');
+        const saved = localStorage.getItem('nexus_profile_v3');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && typeof parsed === 'object') {
@@ -122,7 +119,7 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('nexus_profile_v2', JSON.stringify(profile));
+      localStorage.setItem('nexus_profile_v3', JSON.stringify(profile));
     } catch {
       // quota or private browsing
     }
@@ -132,7 +129,7 @@ export const App: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('nexus_posts_v2');
+        const saved = localStorage.getItem('nexus_posts_v3');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
@@ -160,7 +157,7 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('nexus_posts_v2', JSON.stringify(posts));
+      localStorage.setItem('nexus_posts_v3', JSON.stringify(posts));
     } catch {
       // quota
     }
@@ -170,7 +167,7 @@ export const App: React.FC = () => {
   const [jobs, setJobs] = useState<JobOpportunity[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('nexus_jobs_v2');
+        const saved = localStorage.getItem('nexus_jobs_v3');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -184,7 +181,7 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('nexus_jobs_v2', JSON.stringify(jobs));
+      localStorage.setItem('nexus_jobs_v3', JSON.stringify(jobs));
     } catch {
       // quota
     }
@@ -194,7 +191,7 @@ export const App: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('nexus_notifications_v2');
+        const saved = localStorage.getItem('nexus_notifications_v3');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed)) return parsed;
@@ -208,7 +205,7 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('nexus_notifications_v2', JSON.stringify(notifications));
+      localStorage.setItem('nexus_notifications_v3', JSON.stringify(notifications));
     } catch {
       // quota
     }

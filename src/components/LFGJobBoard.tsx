@@ -11,7 +11,9 @@ import {
   Code,
   Bookmark,
   Bot,
-  ArrowRight
+  ArrowRight,
+  Globe,
+  Trophy
 } from 'lucide-react';
 import type { JobOpportunity } from '../types';
 import { sounds } from '../utils/audio';
@@ -191,20 +193,24 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
                   <h3 className="job-title-text">{job.title}</h3>
 
                   <div className="job-sub-specs">
-                    <span className="spec-item text-emerald">
-                      <DollarSign size={13} />
-                      <strong>{job.salary}</strong>
+                    <span className="spec-item spec-salary text-emerald">
+                      <DollarSign size={13} className="spec-icon" />
+                      <strong>{job.salary.startsWith('$') ? job.salary.slice(1) : job.salary}</strong>
                     </span>
-                    <span className="spec-item">
-                      <MapPin size={13} />
-                      {job.region}
+                    <span className="spec-item spec-region">
+                      <MapPin size={13} className="spec-icon" />
+                      <span>{job.region}</span>
                     </span>
                     {job.isRemote && (
-                      <span className="remote-badge">🌐 100% Remote</span>
+                      <span className="spec-badge remote-badge">
+                        <Globe size={12} className="spec-badge-icon" />
+                        <span>Remote</span>
+                      </span>
                     )}
                     {job.requiredRank && (
-                      <span className="rank-req-badge">
-                        🏆 Req: <strong>{job.requiredRank}</strong>
+                      <span className="spec-badge rank-req-badge">
+                        <Trophy size={12} className="spec-badge-icon" />
+                        <span>Req: <strong>{job.requiredRank}</strong></span>
                       </span>
                     )}
                   </div>
@@ -222,57 +228,59 @@ export const LFGJobBoard: React.FC<LFGJobBoardProps> = ({
               {/* Action Buttons Column */}
               <div className="job-actions-col">
                 <div className="job-applicants-note">
-                  <Users size={12} />
+                  <Users size={13} />
                   <span>{job.applicantsCount} Verified Applicants</span>
                 </div>
 
-                {job.applied ? (
-                  <button className="btn-applied-status" disabled>
-                    <CheckCircle2 size={15} />
-                    <span>Applied with Passport</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      sounds.playClick();
-                      onOpenApplyModal(job);
-                    }}
-                    className="btn-glow-primary job-apply-btn"
-                  >
-                    <span>Apply with Passport</span>
-                    <ArrowRight size={14} />
-                  </button>
-                )}
+                <div className="job-action-buttons-group">
+                  {job.applied ? (
+                    <button className="btn-applied-status" disabled>
+                      <CheckCircle2 size={14} />
+                      <span>Applied with Passport</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        sounds.playClick();
+                        onOpenApplyModal(job);
+                      }}
+                      className="btn-glow-primary job-apply-btn"
+                    >
+                      <span>Apply with Passport</span>
+                      <ArrowRight size={14} />
+                    </button>
+                  )}
 
-                {/* AI Pitch Shortcut */}
-                {onOpenAIWithJob && (
-                  <button
-                    onClick={() => {
-                      sounds.playSuccess();
-                      onOpenAIWithJob(job);
-                    }}
-                    className="btn-ai-pitch-shortcut"
-                    title="Generate tailored application pitch using AI"
-                  >
-                    <Bot size={13} className="text-emerald" />
-                    <span>Draft Pitch with AI</span>
-                  </button>
-                )}
+                  {/* AI Pitch Shortcut */}
+                  {onOpenAIWithJob && (
+                    <button
+                      onClick={() => {
+                        sounds.playSuccess();
+                        onOpenAIWithJob(job);
+                      }}
+                      className="btn-ai-pitch-shortcut"
+                      title="Generate tailored application pitch using AI"
+                    >
+                      <Bot size={13} className="text-emerald" />
+                      <span>Draft Pitch with AI</span>
+                    </button>
+                  )}
 
-                {/* Bookmark Toggle */}
-                {onToggleSaveJob && (
-                  <button
-                    onClick={() => {
-                      sounds.playClick();
-                      onToggleSaveJob(job.id);
-                    }}
-                    className={`btn-save-job ${job.saved ? 'saved' : ''}`}
-                    title={job.saved ? 'Remove Bookmark' : 'Save Job Opportunity'}
-                  >
-                    <Bookmark size={13} fill={job.saved ? 'currentColor' : 'none'} />
-                    <span>{job.saved ? 'Bookmarked' : 'Save'}</span>
-                  </button>
-                )}
+                  {/* Bookmark Toggle */}
+                  {onToggleSaveJob && (
+                    <button
+                      onClick={() => {
+                        sounds.playClick();
+                        onToggleSaveJob(job.id);
+                      }}
+                      className={`btn-save-job ${job.saved ? 'saved' : ''}`}
+                      title={job.saved ? 'Remove Bookmark' : 'Save Job Opportunity'}
+                    >
+                      <Bookmark size={13} fill={job.saved ? 'currentColor' : 'none'} />
+                      <span>{job.saved ? 'Saved' : 'Save'}</span>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))
